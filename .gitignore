@@ -1,0 +1,14 @@
+# VS Code
+.vscode/
+
+# Mac OS
+.DS_Store
+
+# Build
+*.class
+
+# Executable
+*.jar
+
+# ZIP
+*.zip
