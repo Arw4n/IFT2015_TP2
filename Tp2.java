@@ -1,10 +1,10 @@
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
+import java.util.TreeMap;
 import java.io.FileReader;
+import java.io.BufferedReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.TreeMap;
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
 
 public class Tp2 {
     /*
@@ -38,23 +38,61 @@ public class Tp2 {
             BufferedReader entree = new BufferedReader(new FileReader(args[0]));
             BufferedWriter sortie = new BufferedWriter(new FileWriter(args[1]));
             
-            TreeMap<String, TreeMap<String, Integer>> stock = new TreeMap<>(); //Premier Str : Nom du médicament, Deuxième Str : date d'expiration, Int : nombre en stock
+            TreeMap<String, Object[]> stock = new TreeMap<>(); //Str : Nom du médicament, Object[] : date d'expiration (Str), stocks (Int)
             TreeMap<String, Integer> commandes = new TreeMap<>(); //Str : nom du médicament, Int : nombre de médicaments à commander
 
             String ligne = entree.readLine();
+            if(ligne==null) { // Si fichier vide. 
+                entree.close();
+                sortie.close();
+                return;
+            }
             while(ligne!=null) {
                 System.out.println(ligne);
-                ligne = entree.readLine();
+                String[] infos = ligne.trim().split("\s++"); // Tableau des données de chaque ligne.
+                
+                // InputStream "DATE" :
+                if(infos[0]=="DATE") {
+                    sortie.write(infos[1] + " OK");
+                    sortie.newLine();
+                    ligne = entree.readLine(); // Passage à ligne suivante.
+                }
+                
+                // InputStream "APPROV" :
+                if(infos[0]=="APPROV") {
+                    ligne = entree.readLine(); // Passage à ligne suivante.
+                    infos = ligne.trim().split("\s++");
+                    
+                    while(infos[0]!=";") {
+                        stock.put(infos[0], new Object[]{infos[2], infos[1]});
+                        ligne = entree.readLine(); // Passage à ligne suivante.
+                        infos = ligne.trim().split("\s++");
+                        sortie.write("APPROV OK");
+                        sortie.newLine();
+                    }
+                }
+                
+                // InputStream "PRESCRIPTION" :
+                if(infos[0]=="PRESCRIPTION") {
+                    /*
+                    int compteur = 1;
+                    ligne = entree.readLine(); // Passage à ligne suivante.
+                    infos = ligne.trim().split("\s++");
+                    
+                    while(infos[0]!=";") {
+                        
+                        ligne = entree.readLine(); // Passage à ligne suivante.
+                        infos = ligne.trim().split("\s++");
+                    }
+                    */
+                }
+                
+                
+                // InputStream "STOCK" :
+
+
+                
             }
-
-            // InputStream "DATE" :
-            
-            // InputStream "PRESCRIPTION" :
-
-            // InputStream "APPROV" :
-            
-            // InputStream "STOCK" :
-            
             entree.close();
             sortie.close();
         } catch (FileNotFoundException e) {
