@@ -93,6 +93,8 @@ public class Tp2 {
                         lots.keySet().removeIf(dateExp -> dateExp.compareTo(currentDate) <= 0); // O(L) => L: nombre de lots par médicament
                     }
                     
+                    // Ajout d'une ligne vide de séparation après le traitement d'un bloc DATE complet
+                    sortie.newLine();
                     ligne = entree.readLine(); 
                 }
                 
@@ -183,23 +185,23 @@ public class Tp2 {
                                         continue; // lot expiré
                                     }
 
-                                    int lot = lots.get(dateExp); // O(log L) pour lire la valeur du lot
+                                    int qteLot = lots.get(dateExp); // O(log L) pour lire la valeur du lot
                                     
                                     // Vérifier si la quantité de lot est suffisante
-                                    if (lot <= restant) {
-                                        restant -= lot;
+                                    if (qteLot <= restant) {
+                                        restant -= qteLot;
                                         lots.remove(dateExp); // O(log L) pour supprimer le lot du stock
                                     } else {
-                                        lots.put(dateExp, lot - restant); // O(log L) pour ajuster le stock restant
+                                        lots.put(dateExp, qteLot - restant); // O(log L) pour ajuster le stock restant
                                         restant = 0;
                                         break;
                                     }
                                 }
                                
-                                sortie.write(nom + " " + dose + " " + repetitions + " OK");
+                               sortie.write(nom + " " + dose + " " + repetitions + "  OK");
                             } else {
-                                commandes.put(nom, commandes.getOrDefault(nom, 0) + quantiteRequise); // O(log C) insertion dans les commandes
-                                sortie.write(nom + " " + dose + " " + repetitions + " COMMANDE");
+                                commandes.put(nom, commandes.getOrDefault(nom, 0) + quantiteRequise); // O(log C) pour insérer le médicament dans les commandes
+                                sortie.write(nom + " " + dose + " " + repetitions + "  COMMANDE");
                             }
                             
                             sortie.newLine();
@@ -211,6 +213,7 @@ public class Tp2 {
                         }
                     }
                     
+                    sortie.newLine(); // ligne vide après chaque PRESCRIPTION
                     ligne = entree.readLine();
                 }
                 
@@ -224,19 +227,20 @@ public class Tp2 {
                     sortie.write("STOCK " + currentDate);
                     sortie.newLine();
                     
-                    // Affichage des lots expirés
+                    // Affichage des lots valides
                     for (Map.Entry<String, TreeMap<String, Integer>> med : stock.entrySet()) { // O(n) pour parcourir tous les médicaments
                         String nom = med.getKey();
                         
                         for (Map.Entry<String, Integer> lot : med.getValue().entrySet()) { // O(L) pour parcourir les L lots de chaque médicament
-                            // Vérifier si le lot est expiré et a une quantité positive
-                            if ((lot.getKey().compareTo(currentDate) <= 0) && (lot.getValue() > 0)) {
+                            // Vérifier si le lot est valide (non expiré et quantité positive)
+                            if ((lot.getKey().compareTo(currentDate) > 0) && (lot.getValue() > 0)) {
                                 sortie.write(nom + " " + lot.getValue() + " " + lot.getKey());
                                 sortie.newLine();
                             }
                         }
                     }
                     
+                    sortie.newLine(); // ligne vide après chaque STOCK
                     ligne = entree.readLine();
                 } else {
                     ligne = entree.readLine();
